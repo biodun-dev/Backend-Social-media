@@ -34,7 +34,10 @@ export const login = async (
       logger.warn("Authentication failed for email: " + email);
       return res.status(401).send("Authentication failed");
     }
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, {
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET is not defined");
+    }
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
     logger.info(`User logged in successfully: ${email}`);
@@ -52,7 +55,7 @@ export const followUser = async (
   if (!req.user) return res.status(401).json({ message: "Unauthorized" });
 
   try {
-    const { followId } = req.params; // ID of the user to follow
+    const { followId } = req.params; 
     const user = await User.findById(req.user.id);
     if (!user) {
       logger.warn(`User not found: ${req.user.id}`);
