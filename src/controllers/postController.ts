@@ -59,11 +59,9 @@ export const getFeed = async (req: Request, res: Response) => {
     res.json(postsWithDetails);
   } catch (error) {
     console.error("Error in fetching feed:", error);
-    res
-      .status(500)
-      .json({
-        message: isError(error) ? error.message : "An unknown error occurred",
-      });
+    res.status(500).json({
+      message: isError(error) ? error.message : "An unknown error occurred",
+    });
   }
 };
 
@@ -89,6 +87,18 @@ export const likePost = async (req: Request, res: Response) => {
 
     const like = new Like({ postId, userId: req.user.id });
     await like.save();
+
+    // Emit WebSocket event with more details
+    req.app.locals.io.emit("likePost", {
+      postId: postId,
+      userId: req.user.id,
+      userName: req.user.username, // Assuming username is available
+    });
+
+    console.log(
+      `Like by ${req.user.username} event emitted for post ${postId} `
+    );
+
     res.status(201).send("Post liked");
   } catch (error: unknown) {
     if (isError(error)) {
@@ -105,8 +115,29 @@ export const commentOnPost = async (req: Request, res: Response) => {
   try {
     const { postId } = req.params;
     const { comment } = req.body;
-    const newComment = new Comment({ postId, userId: req.user.id, comment });
+    const newComment = new Comment({
+      postId,
+      userId: req.user.id,
+      comment,
+    });
     await newComment.save();
+
+    const userDetail = {
+      id: req.user.id,
+      name: req.user.username,
+    };
+
+    // Emit WebSocket event with more details
+    req.app.locals.io.emit("commentPost", {
+      postId,
+      comment,
+      user: userDetail,
+    });
+
+    console.log(
+      `Comment event emitted for post ${postId} by ${userDetail.name}: '${comment}'`
+    );
+
     res.status(201).json(newComment);
   } catch (error: unknown) {
     if (isError(error)) {
