@@ -346,3 +346,41 @@
 2024-07-06T23:12:06.269Z [[32minfo[39m]: Mentioned user @user1 has no active socket ID.
 2024-07-06T23:12:06.269Z [[32minfo[39m]: Cache invalidated for pattern: feed_6689398ac0753415ee9f6ed3_page_
 2024-07-06T23:12:23.635Z [[32minfo[39m]: Feed retrieved and cached successfully
+2024-07-06T23:15:38.046Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T23:17:43.250Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T23:19:34.656Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T23:22:42.869Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T23:22:48.005Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T23:23:24.668Z [[32minfo[39m]: Feed retrieved and cached successfully
+2024-07-06T23:23:29.992Z [[32minfo[39m]: Post created by biodunbio
+2024-07-06T23:23:29.992Z [[32minfo[39m]: Extracted mentions: user1
+2024-07-06T23:23:29.995Z [[32minfo[39m]: Mentioned user @user1 has no active socket ID.
+2024-07-06T23:23:29.996Z [[32minfo[39m]: Cache invalidated for pattern: feed_6689398ac0753415ee9f6ed3_page_
+2024-07-06T23:23:52.559Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T23:24:03.602Z [[32minfo[39m]: Feed retrieved and cached successfully
+2024-07-06T23:25:32.917Z [[32minfo[39m]: Feed retrieved and cached successfully
+2024-07-06T23:25:42.938Z [[32minfo[39m]: Feed retrieved and cached successfully
+2024-07-06T23:33:54.863Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T23:34:13.798Z [[32minfo[39m]: Incoming Request: POST /api/users/login
+2024-07-06T23:34:13.798Z [[32minfo[39m]: Request Body: {"email":"biodunbio14+1@gmail.com","password":"password123"}
+2024-07-06T23:34:13.882Z [[32minfo[39m]: User logged in successfully: biodunbio14+1@gmail.com
+2024-07-06T23:34:13.885Z [[32minfo[39m]: Request to POST /api/users/login completed in 87ms
+2024-07-06T23:34:13.885Z [[32minfo[39m]: Response Status: 200
+2024-07-06T23:34:36.606Z [[32minfo[39m]: Feed retrieved and cached successfully
+2024-07-06T23:34:55.038Z [[32minfo[39m]: Feed retrieved and cached successfully
+2024-07-06T23:37:32.299Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T23:37:33.995Z [[31merror[39m]: Error retrieving feed:
+2024-07-06T23:37:41.638Z [[31merror[39m]: Error retrieving feed:
+2024-07-06T23:38:57.092Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T23:38:59.826Z [[31merror[39m]: Error retrieving feed:
+2024-07-06T23:39:17.841Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T23:39:19.091Z [[32minfo[39m]: Feed retrieved and cached successfully
+2024-07-06T23:42:50.170Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T23:43:05.572Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T23:43:10.358Z [[32minfo[39m]: Feed retrieved and cached successfully
+2024-07-06T23:44:08.125Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T23:44:09.801Z [[32minfo[39m]: Feed retrieved and cached successfully
+2024-07-06T23:44:41.599Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T23:44:41.891Z [[32minfo[39m]: Feed retrieved and cached successfully
+2024-07-06T23:45:06.132Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T23:45:07.275Z [[32minfo[39m]: Feed retrieved and cached successfully
