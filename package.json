@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-   "start": "ts-node src/index.ts",
-  "dev": "nodemon --exec ts-node src/index.ts",
+    "start": "ts-node src/index.ts",
+    "dev": "nodemon --exec ts-node src/index.ts",
     "build": "tsc",
     "test": "jest"
   },
@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "arg": "^5.0.2",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -24,6 +25,7 @@
     "mongoose": "^8.4.4",
     "redis": "^4.6.15",
     "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {

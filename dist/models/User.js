@@ -18,7 +18,8 @@ const UserSchema = new mongoose_1.default.Schema({
     username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    following: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: 'User' }] // Define the following field
+    following: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: 'User' }], // Define the following field
+    socketId: { type: String }
 });
 UserSchema.pre('save', function (next) {
     return __awaiter(this, void 0, void 0, function* () {

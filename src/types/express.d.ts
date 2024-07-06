@@ -6,11 +6,13 @@ declare global {
       username: string;
       email: string;
       password: string;
+      
       following: Types.ObjectId[];
     }
 
     interface Request {
       user?: User;
+      
     }
   }
 }

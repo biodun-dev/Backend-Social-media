@@ -12,4 +12,5 @@ router.post('/register', userController_1.register);
 router.post('/login', userController_1.login);
 // Protected route
 router.patch('/follow/:followId', authMiddleware_1.authenticate, userController_1.followUser);
+router.get('/me/data', authMiddleware_1.authenticate, userController_1.getUserData);
 exports.default = router;

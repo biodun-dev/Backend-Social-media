@@ -5,16 +5,47 @@ import Comment from "../models/Comment";
 // import { getCache, setCache } from "../utils/redisClient";
 import { isError } from "../utils/errorUtils";
 import mongoose from "mongoose";
+import { extractMentions } from "../utils/mentionUtils";
+import User, { IUser } from "../models/User";
 
 export const createPost = async (req: Request, res: Response) => {
   if (!req.user) return res.status(401).json({ message: "Unauthorized" });
 
+  const username = req.user?.username; // Optional chaining for safety
+  if (!username) return res.status(401).json({ message: "Unauthorized" });
+
   try {
     const { content, mediaUrl } = req.body;
-    const post = new Post({ createdBy: req.user.id, content, mediaUrl });
+    const post = new Post({ createdBy: req.user._id, content, mediaUrl });
     await post.save();
+
+    // Handle mentions
+    const mentions = extractMentions(content);
+    console.log("Extracted mentions:", mentions);
+    const mentionPromises = mentions.map(async (username) => {
+      const mentionedUser = await User.findOne({ username }) as IUser | null;
+      if (mentionedUser) {
+          console.log(`User found: ${mentionedUser.username}, Socket ID: ${mentionedUser.socketId}`);
+          if (mentionedUser.socketId) {
+              // Emit event
+              req.app.locals.io.to(mentionedUser.socketId).emit("mentionedInPost", {
+                postId: post._id,
+                postContent: content.slice(0, 100),
+                fromUser: username,
+              });
+              console.log(`Notification sent to @${username} for being mentioned in a post.`);
+          } else {
+              console.log(`No active socket ID for @${username}`);
+          }
+      } else {
+          console.log(`No user found for @${username}`);
+      }
+    });
+
+    await Promise.all(mentionPromises);
+
     res.status(201).json(post);
-  } catch (error: unknown) {
+  } catch (error) {
     if (isError(error)) {
       res.status(500).json({ message: error.message });
     } else {
@@ -22,6 +53,10 @@ export const createPost = async (req: Request, res: Response) => {
     }
   }
 };
+
+
+
+
 
 export const getFeed = async (req: Request, res: Response) => {
   if (!req.user) return res.status(401).json({ message: "Unauthorized" });
@@ -91,7 +126,7 @@ export const likePost = async (req: Request, res: Response) => {
     req.app.locals.io.emit("likePost", {
       postId: postId,
       userId: req.user.id,
-      userName: req.user.username, 
+      userName: req.user.username,
     });
 
     console.log(
@@ -126,11 +161,27 @@ export const commentOnPost = async (req: Request, res: Response) => {
       name: req.user.username,
     };
 
-  
     req.app.locals.io.emit("commentPost", {
       postId,
       comment,
       user: userDetail,
+    });
+
+    // Handle mentions
+    const mentions = extractMentions(comment);
+    mentions.forEach(async (username) => {
+      const mentionedUser = await User.findOne({ username: username });
+      if (mentionedUser) {
+        req.app.locals.io
+          .to(mentionedUser.socketId)
+          .emit("mentionedInComment", {
+            postId,
+            commentId: newComment._id,
+            fromUser: userDetail,
+            commentText: comment,
+          });
+        console.log(`Notification sent to @${username} for being mentioned.`);
+      }
     });
 
     console.log(

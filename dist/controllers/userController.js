@@ -12,10 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.followUser = exports.login = exports.register = void 0;
+exports.getUserData = exports.followUser = exports.login = exports.register = void 0;
 const User_1 = __importDefault(require("../models/User"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const errorUtils_1 = require("../utils/errorUtils"); // Import the isError function
+const Post_1 = __importDefault(require("../models/Post"));
+const Like_1 = __importDefault(require("../models/Like"));
+const Comment_1 = __importDefault(require("../models/Comment"));
+const errorUtils_1 = require("../utils/errorUtils");
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { username, email, password } = req.body;
@@ -83,3 +86,34 @@ const followUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.followUser = followUser;
+const getUserData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!req.user)
+        return res.status(401).json({ message: "Unauthorized" });
+    try {
+        const userId = req.user.id;
+        // Fetch posts created by the user
+        const posts = yield Post_1.default.find({ createdBy: userId });
+        // For each post, fetch likes and comments
+        const postDetails = yield Promise.all(posts.map((post) => __awaiter(void 0, void 0, void 0, function* () {
+            const likes = yield Like_1.default.find({ postId: post._id }).populate('userId', 'username');
+            const comments = yield Comment_1.default.find({ postId: post._id }).populate('userId', 'username');
+            return Object.assign(Object.assign({}, post.toJSON()), { likes, comments });
+        })));
+        // Fetch followers of the user
+        const followers = yield User_1.default.find({ following: { $in: [userId] } }, 'username');
+        const userData = {
+            posts: postDetails,
+            followers
+        };
+        res.json(userData);
+    }
+    catch (error) {
+        if ((0, errorUtils_1.isError)(error)) {
+            res.status(500).json({ message: error.message });
+        }
+        else {
+            res.status(500).json({ message: "An unknown error occurred" });
+        }
+    }
+});
+exports.getUserData = getUserData;

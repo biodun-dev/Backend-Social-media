@@ -5,6 +5,7 @@ interface IUser extends Document {
   username: string;
   email: string;
   password: string;
+  socketId?: string; 
   following: mongoose.Types.ObjectId[]; // Add the following field
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
@@ -13,7 +14,8 @@ const UserSchema: Schema<IUser> = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] // Define the following field
+  following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // Define the following field
+  socketId: { type: String }  
 });
 
 UserSchema.pre<IUser>('save', async function (next) {
