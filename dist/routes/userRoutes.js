@@ -5,12 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const userController_1 = require("../controllers/userController");
-const authMiddleware_1 = require("../middlewares/authMiddleware"); // Ensure correct import path
+const authMiddleware_1 = require("../middlewares/authMiddleware");
+const loggingMiddleware_1 = require("../middlewares/loggingMiddleware");
 const router = express_1.default.Router();
-// Public routes
-router.post('/register', userController_1.register);
-router.post('/login', userController_1.login);
-// Protected route
-router.patch('/follow/:followId', authMiddleware_1.authenticate, userController_1.followUser);
-router.get('/me/data', authMiddleware_1.authenticate, userController_1.getUserData);
+router.post("/register", loggingMiddleware_1.logRequest, userController_1.register);
+router.post("/login", loggingMiddleware_1.logRequest, userController_1.login);
+router.post("/follow/:followId", loggingMiddleware_1.logRequest, authMiddleware_1.authenticate, userController_1.followUser);
+router.get("me/data", loggingMiddleware_1.logRequest, authMiddleware_1.authenticate, userController_1.getUserData);
 exports.default = router;

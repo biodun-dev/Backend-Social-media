@@ -19,18 +19,22 @@ const Post_1 = __importDefault(require("../models/Post"));
 const Like_1 = __importDefault(require("../models/Like"));
 const Comment_1 = __importDefault(require("../models/Comment"));
 const errorUtils_1 = require("../utils/errorUtils");
+const logger_1 = __importDefault(require("../utils/logger"));
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { username, email, password } = req.body;
         const user = new User_1.default({ username, email, password });
         yield user.save();
+        logger_1.default.info(`User registered successfully: ${username}`);
         res.status(201).send("User registered successfully");
     }
     catch (error) {
         if ((0, errorUtils_1.isError)(error)) {
+            logger_1.default.error(`Error registering user: ${error.message}`);
             res.status(500).json({ message: error.message });
         }
         else {
+            logger_1.default.error('Unknown error registering user');
             res.status(500).json({ message: "An unknown error occurred" });
         }
     }
@@ -41,18 +45,22 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const { email, password } = req.body;
         const user = yield User_1.default.findOne({ email });
         if (!user || !(yield user.comparePassword(password))) {
+            logger_1.default.warn('Authentication failed for email: ' + email);
             return res.status(401).send("Authentication failed");
         }
         const token = jsonwebtoken_1.default.sign({ id: user._id }, process.env.JWT_SECRET, {
             expiresIn: "1h",
         });
+        logger_1.default.info(`User logged in successfully: ${email}`);
         res.json({ token });
     }
     catch (error) {
         if ((0, errorUtils_1.isError)(error)) {
+            logger_1.default.error(`Error logging in user: ${error.message}`);
             res.status(500).json({ message: error.message });
         }
         else {
+            logger_1.default.error('Unknown error logging in user');
             res.status(500).json({ message: "An unknown error occurred" });
         }
     }
@@ -65,22 +73,27 @@ const followUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const { followId } = req.params; // ID of the user to follow
         const user = yield User_1.default.findById(req.user.id);
         if (!user) {
+            logger_1.default.warn(`User not found: ${req.user.id}`);
             return res.status(404).json({ message: "User not found" });
         }
         if (!user.following.includes(followId)) {
             user.following.push(followId);
             yield user.save();
+            logger_1.default.info(`User followed successfully: ${followId}`);
             res.status(200).send("User followed");
         }
         else {
+            logger_1.default.info(`Already following user: ${followId}`);
             res.status(400).send("Already following this user");
         }
     }
     catch (error) {
         if ((0, errorUtils_1.isError)(error)) {
+            logger_1.default.error(`Error following user: ${error.message}`);
             res.status(500).json({ message: error.message });
         }
         else {
+            logger_1.default.error('Unknown error following user');
             res.status(500).json({ message: "An unknown error occurred" });
         }
     }
@@ -105,13 +118,16 @@ const getUserData = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             posts: postDetails,
             followers
         };
+        logger_1.default.info(`User data retrieved successfully for user: ${userId}`);
         res.json(userData);
     }
     catch (error) {
         if ((0, errorUtils_1.isError)(error)) {
+            logger_1.default.error(`Error retrieving user data: ${error.message}`);
             res.status(500).json({ message: error.message });
         }
         else {
+            logger_1.default.error('Unknown error retrieving user data');
             res.status(500).json({ message: "An unknown error occurred" });
         }
     }
