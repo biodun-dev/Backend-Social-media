@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import Post from "../models/Post";
 import Like from "../models/Like";
 import Comment from "../models/Comment";
-import { getCache, setCache } from "../utils/redisClient";
-import { isError } from "../utils/errorUtils"; // Import the isError function
+// import { getCache, setCache } from "../utils/redisClient";
+import { isError } from "../utils/errorUtils";
 import mongoose from "mongoose";
 
 export const createPost = async (req: Request, res: Response) => {
@@ -23,27 +23,49 @@ export const createPost = async (req: Request, res: Response) => {
   }
 };
 
-export const getFeed = async (req: Request, res: Response)=> {
-  if (!req.user) return res.status(401).json({ message: 'Unauthorized' });
-
-  console.log("User's following list:", req.user.following);
+export const getFeed = async (req: Request, res: Response) => {
+  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
 
   try {
-    const posts = await Post.find({ createdBy: { $in: req.user.following } }).sort({ createdAt: -1 });
-    console.log("Posts fetched from database:", posts);
+    const posts = await Post.find({
+      createdBy: { $in: req.user.following },
+    }).sort({ createdAt: -1 });
 
     if (!posts.length) {
-      console.log("No posts found for the following list.");
-      return res.status(404).json({ message: 'No posts found from the users you are following.' });
+      return res
+        .status(404)
+        .json({ message: "No posts found from the users you are following." });
     }
 
-    res.json(posts);
+    const postsWithDetails = await Promise.all(
+      posts.map(async (post) => {
+        const likes = await Like.find({ postId: post._id });
+        const comments = await Comment.find({ postId: post._id });
+        return {
+          ...post.toJSON(),
+          likes: likes.map((like) => ({
+            userId: like.userId,
+            date: like.createdAt,
+          })),
+          comments: comments.map((comment) => ({
+            userId: comment.userId,
+            text: comment.comment,
+            date: comment.createdAt,
+          })),
+        };
+      })
+    );
+
+    res.json(postsWithDetails);
   } catch (error) {
     console.error("Error in fetching feed:", error);
-    res.status(500).json({ message: "An error occurred while fetching the feed." });
+    res
+      .status(500)
+      .json({
+        message: isError(error) ? error.message : "An unknown error occurred",
+      });
   }
 };
-
 
 export const likePost = async (req: Request, res: Response) => {
   if (!req.user) return res.status(401).json({ message: "Unauthorized" });
