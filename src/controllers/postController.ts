@@ -7,61 +7,48 @@ import { extractMentions } from "../utils/mentionUtils";
 import User, { IUser } from "../models/User";
 import path from "path";
 import logger from "../utils/logger";
-import cache from "../utils/cache";
+import cache, { invalidateCacheKeys } from "../utils/cache";
 
-export const createPost = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+
+export const createPost = async (req: Request, res: Response, next: NextFunction) => {
   if (!req.user) {
     logger.warn("Unauthorized access attempt to create a post");
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  // Since we've already checked that req.user is not undefined, it's safe to assert non-null here
-  const username = req.user.username; // Now safe to access directly after the initial check
+  const { username, _id: userId } = req.user;
 
   try {
     const { content } = req.body;
-    let mediaUrl = "";
+    const mediaUrl = req.file ? path.join("uploads", req.file.filename) : "";
 
-    if (req.file) {
-      mediaUrl = path.join("uploads", req.file.filename); // Ensure your path handling aligns with your server setup
-    }
-
-    const post = new Post({
-      createdBy: req.user._id,
-      content,
-      mediaUrl,
-    });
+    const post = new Post({ createdBy: userId, content, mediaUrl });
     await post.save();
     logger.info(`Post created by ${username}`);
 
     const mentions = extractMentions(content);
-    const mentionPromises = mentions.map(async (username) => {
-      const mentionedUser = (await User.findOne({ username })) as IUser | null;
-      if (mentionedUser && mentionedUser.socketId) {
-        req.app.locals.io.to(mentionedUser.socketId).emit("mentionedInPost", {
-          postId: post._id,
-          postContent: content.slice(0, 100),
-          fromUser: username,
-        });
-        logger.info(
-          `Notification sent to @${username} for being mentioned in a post.`
-        );
+    logger.info(`Extracted mentions: ${mentions.join(", ")}`);
+
+    const mentionPromises = mentions.map(async (mentionUsername) => {
+      const mentionedUser = await User.findOne({ username: mentionUsername }) as IUser | null;
+      if (mentionedUser) {
+        if (mentionedUser.socketId) {
+          req.app.locals.io.to(mentionedUser.socketId).emit("mentionedInPost", {
+            postId: post._id,
+            postContent: content.slice(0, 100),
+            fromUser: username,
+          });
+          logger.info(`Notification sent to @${mentionUsername} (Socket ID: ${mentionedUser.socketId}) for being mentioned in a post.`);
+        } else {
+          logger.info(`Mentioned user @${mentionUsername} has no active socket ID.`);
+        }
+      } else {
+        logger.info(`No user found for @${mentionUsername}`);
       }
     });
-
     await Promise.all(mentionPromises);
 
-    // Invalidate cache
-    const keys = cache.keys();
-    const relevantKeys = keys.filter((key) =>
-      key.startsWith(`feed_${req.user!._id}_page_`)
-    );
-    relevantKeys.forEach((key) => cache.del(key));
-    logger.info("Cache invalidated after post creation.");
+    invalidateCacheKeys(`feed_${userId}_page_`);
 
     res.status(201).json(post);
   } catch (error) {
@@ -70,11 +57,7 @@ export const createPost = async (
   }
 };
 
-export const getFeed = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getFeed = async (req: Request, res: Response, next: NextFunction) => {
   if (!req.user) {
     logger.warn("Unauthorized access attempt to get feed");
     return res.status(401).json({ message: "Unauthorized" });
@@ -146,23 +129,20 @@ export const getFeed = async (
     logger.info("Feed retrieved and cached successfully");
     res.json(responseData);
   } catch (error) {
+    logger.error("Error retrieving feed: ", error);
     next(error);
   }
 };
 
-export const likePost = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const likePost = async (req: Request, res: Response, next: NextFunction) => {
   if (!req.user) {
     logger.warn("Unauthorized access attempt to like a post");
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  try {
-    const { postId } = req.params;
+  const { postId } = req.params;
 
+  try {
     if (!mongoose.Types.ObjectId.isValid(postId)) {
       logger.warn(`Invalid postId format: ${postId}`);
       return res.status(400).json({ message: "Invalid postId format" });
@@ -183,83 +163,55 @@ export const likePost = async (
     const like = new Like({ postId, userId: req.user.id });
     await like.save();
 
-    req.app.locals.io.emit("likePost", {
-      postId: postId,
-      userId: req.user.id,
-      userName: req.user.username,
-    });
+    req.app.locals.io.emit("likePost", { postId, userId: req.user.id, userName: req.user.username });
+    logger.info(`Like by ${req.user.username} event emitted for post ${postId}`);
 
-    logger.info(
-      `Like by ${req.user.username} event emitted for post ${postId}`
-    );
     res.status(201).send("Post liked");
-  } catch (error: unknown) {
+  } catch (error) {
+    logger.error("Error liking post: ", error);
     next(error);
   }
 };
 
-export const commentOnPost = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const commentOnPost = async (req: Request, res: Response, next: NextFunction) => {
   if (!req.user) {
     logger.warn("Unauthorized access attempt to comment on a post");
     return res.status(401).json({ message: "Unauthorized" });
   }
 
+  const { postId } = req.params;
+  const { comment } = req.body;
+
   try {
-    const { postId } = req.params;
-    const { comment } = req.body;
-    const newComment = new Comment({
-      postId,
-      userId: req.user.id,
-      comment,
-    });
+    const newComment = new Comment({ postId, userId: req.user.id, comment });
     await newComment.save();
 
-    const userDetail = {
-      id: req.user.id,
-      name: req.user.username,
-    };
+    const userDetail = { id: req.user.id, name: req.user.username };
 
-    req.app.locals.io.emit("commentPost", {
-      postId,
-      comment,
-      user: userDetail,
-    });
+    req.app.locals.io.emit("commentPost", { postId, comment, user: userDetail });
 
-    // Handle mentions
     const mentions = extractMentions(comment);
     logger.info(`Extracted mentions: ${mentions.join(", ")}`);
     const mentionPromises = mentions.map(async (username) => {
-      const mentionedUser = (await User.findOne({ username })) as IUser | null;
-      if (mentionedUser) {
-        if (mentionedUser.socketId) {
-          req.app.locals.io
-            .to(mentionedUser.socketId)
-            .emit("mentionedInComment", {
-              postId,
-              commentId: newComment._id,
-              fromUser: userDetail,
-              commentText: comment,
-            });
-          logger.info(`Notification sent to @${username} for being mentioned.`);
-        } else {
-          logger.info(`No active socket ID for @${username}`);
-        }
+      const mentionedUser = await User.findOne({ username }) as IUser | null;
+      if (mentionedUser?.socketId) {
+        req.app.locals.io.to(mentionedUser.socketId).emit("mentionedInComment", {
+          postId,
+          commentId: newComment._id,
+          fromUser: userDetail,
+          commentText: comment,
+        });
+        logger.info(`Notification sent to @${username} for being mentioned.`);
       } else {
-        logger.info(`No user found for @${username}`);
+        logger.info(`No active socket ID for @${username}`);
       }
     });
-
     await Promise.all(mentionPromises);
 
-    logger.info(
-      `Comment event emitted for post ${postId} by ${userDetail.name}: '${comment}'`
-    );
+    logger.info(`Comment event emitted for post ${postId} by ${userDetail.name}: '${comment}'`);
     res.status(201).json(newComment);
-  } catch (error: unknown) {
+  } catch (error) {
+    logger.error("Error commenting on post: ", error);
     next(error);
   }
 };
