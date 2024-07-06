@@ -25,15 +25,13 @@ This project is a backend API built with TypeScript, Express, and MongoDB. The A
 1. Clone the repository:
 
    ```bash
-   cd social-media-api
+   cd Backend/
    ```
 
 2. Install dependencies:
 
    ```bash
    npm install
-   # or
-   yarn install
    ```
 
 3. Set up environment variables:
@@ -54,8 +52,6 @@ REDIS_URL=redis://localhost:6379
 
    ```bash
    npm run dev
-   # or
-   yarn dev
    ```
 
    The server should now be running on `http://localhost:5000`.
