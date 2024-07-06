@@ -9,8 +9,11 @@ import path from "path";
 import logger from "../utils/logger";
 import cache, { invalidateCacheKeys } from "../utils/cache";
 
-
-export const createPost = async (req: Request, res: Response, next: NextFunction) => {
+export const createPost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   if (!req.user) {
     logger.warn("Unauthorized access attempt to create a post");
     return res.status(401).json({ message: "Unauthorized" });
@@ -30,7 +33,9 @@ export const createPost = async (req: Request, res: Response, next: NextFunction
     logger.info(`Extracted mentions: ${mentions.join(", ")}`);
 
     const mentionPromises = mentions.map(async (mentionUsername) => {
-      const mentionedUser = await User.findOne({ username: mentionUsername }) as IUser | null;
+      const mentionedUser = (await User.findOne({
+        username: mentionUsername,
+      })) as IUser | null;
       if (mentionedUser) {
         if (mentionedUser.socketId) {
           req.app.locals.io.to(mentionedUser.socketId).emit("mentionedInPost", {
@@ -38,9 +43,13 @@ export const createPost = async (req: Request, res: Response, next: NextFunction
             postContent: content.slice(0, 100),
             fromUser: username,
           });
-          logger.info(`Notification sent to @${mentionUsername} (Socket ID: ${mentionedUser.socketId}) for being mentioned in a post.`);
+          logger.info(
+            `Notification sent to @${mentionUsername} (Socket ID: ${mentionedUser.socketId}) for being mentioned in a post.`
+          );
         } else {
-          logger.info(`Mentioned user @${mentionUsername} has no active socket ID.`);
+          logger.info(
+            `Mentioned user @${mentionUsername} has no active socket ID.`
+          );
         }
       } else {
         logger.info(`No user found for @${mentionUsername}`);
@@ -52,12 +61,20 @@ export const createPost = async (req: Request, res: Response, next: NextFunction
 
     res.status(201).json(post);
   } catch (error) {
-    logger.error("Error creating post: ", error);
+    logger.error("Error creating post:", {
+      error,
+      userId,
+      content: req.body.content,
+    });
     next(error);
   }
 };
 
-export const getFeed = async (req: Request, res: Response, next: NextFunction) => {
+export const getFeed = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   if (!req.user) {
     logger.warn("Unauthorized access attempt to get feed");
     return res.status(401).json({ message: "Unauthorized" });
@@ -129,12 +146,16 @@ export const getFeed = async (req: Request, res: Response, next: NextFunction) =
     logger.info("Feed retrieved and cached successfully");
     res.json(responseData);
   } catch (error) {
-    logger.error("Error retrieving feed: ", error);
+    logger.error("Error retrieving feed:", { error, userId: req.user.id });
     next(error);
   }
 };
 
-export const likePost = async (req: Request, res: Response, next: NextFunction) => {
+export const likePost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   if (!req.user) {
     logger.warn("Unauthorized access attempt to like a post");
     return res.status(401).json({ message: "Unauthorized" });
@@ -163,17 +184,27 @@ export const likePost = async (req: Request, res: Response, next: NextFunction) 
     const like = new Like({ postId, userId: req.user.id });
     await like.save();
 
-    req.app.locals.io.emit("likePost", { postId, userId: req.user.id, userName: req.user.username });
-    logger.info(`Like by ${req.user.username} event emitted for post ${postId}`);
+    req.app.locals.io.emit("likePost", {
+      postId,
+      userId: req.user.id,
+      userName: req.user.username,
+    });
+    logger.info(
+      `Like by ${req.user.username} event emitted for post ${postId}`
+    );
 
     res.status(201).send("Post liked");
   } catch (error) {
-    logger.error("Error liking post: ", error);
+    logger.error("Error liking post:", { error, userId: req.user.id, postId });
     next(error);
   }
 };
 
-export const commentOnPost = async (req: Request, res: Response, next: NextFunction) => {
+export const commentOnPost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   if (!req.user) {
     logger.warn("Unauthorized access attempt to comment on a post");
     return res.status(401).json({ message: "Unauthorized" });
@@ -188,19 +219,25 @@ export const commentOnPost = async (req: Request, res: Response, next: NextFunct
 
     const userDetail = { id: req.user.id, name: req.user.username };
 
-    req.app.locals.io.emit("commentPost", { postId, comment, user: userDetail });
+    req.app.locals.io.emit("commentPost", {
+      postId,
+      comment,
+      user: userDetail,
+    });
 
     const mentions = extractMentions(comment);
     logger.info(`Extracted mentions: ${mentions.join(", ")}`);
     const mentionPromises = mentions.map(async (username) => {
-      const mentionedUser = await User.findOne({ username }) as IUser | null;
+      const mentionedUser = (await User.findOne({ username })) as IUser | null;
       if (mentionedUser?.socketId) {
-        req.app.locals.io.to(mentionedUser.socketId).emit("mentionedInComment", {
-          postId,
-          commentId: newComment._id,
-          fromUser: userDetail,
-          commentText: comment,
-        });
+        req.app.locals.io
+          .to(mentionedUser.socketId)
+          .emit("mentionedInComment", {
+            postId,
+            commentId: newComment._id,
+            fromUser: userDetail,
+            commentText: comment,
+          });
         logger.info(`Notification sent to @${username} for being mentioned.`);
       } else {
         logger.info(`No active socket ID for @${username}`);
@@ -208,10 +245,17 @@ export const commentOnPost = async (req: Request, res: Response, next: NextFunct
     });
     await Promise.all(mentionPromises);
 
-    logger.info(`Comment event emitted for post ${postId} by ${userDetail.name}: '${comment}'`);
+    logger.info(
+      `Comment event emitted for post ${postId} by ${userDetail.name}: '${comment}'`
+    );
     res.status(201).json(newComment);
   } catch (error) {
-    logger.error("Error commenting on post: ", error);
+    logger.error("Error commenting on post:", {
+      error,
+      userId: req.user.id,
+      postId,
+      comment,
+    });
     next(error);
   }
 };
