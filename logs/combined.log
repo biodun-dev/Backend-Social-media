@@ -15,3 +15,86 @@
 2024-07-06T13:46:31.838Z [[32minfo[39m]: Server running on http://localhost:5000
 2024-07-06T13:46:37.535Z [[32minfo[39m]: Server running on http://localhost:5000
 2024-07-06T13:46:42.277Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T13:48:48.652Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T13:49:09.309Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T13:49:18.900Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T13:49:29.420Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T13:53:15.285Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T13:55:08.051Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T13:55:23.574Z [[32minfo[39m]: Incoming Request: POST /login
+2024-07-06T13:55:23.575Z [[32minfo[39m]: Request Body:
+2024-07-06T13:55:23.652Z [[32minfo[39m]: User logged in successfully: biodunbio14+1@gmail.com
+2024-07-06T13:55:23.656Z [[32minfo[39m]: Request to POST /login completed in 80ms
+2024-07-06T13:55:23.656Z [[32minfo[39m]: Response Status:
+2024-07-06T13:55:49.741Z [[32minfo[39m]: Incoming Request: POST /login
+2024-07-06T13:55:49.741Z [[32minfo[39m]: Request Body:
+2024-07-06T13:55:49.809Z [[33mwarn[39m]: Authentication failed for email: biodunbio14+1@gmail.com
+2024-07-06T13:55:49.811Z [[32minfo[39m]: Request to POST /login completed in 69ms
+2024-07-06T13:55:49.811Z [[32minfo[39m]: Response Status:
+2024-07-06T13:56:33.785Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T13:56:59.206Z [[32minfo[39m]: Incoming Request: POST /login
+2024-07-06T13:56:59.206Z [[32minfo[39m]: Request Body:
+2024-07-06T13:56:59.281Z [[32minfo[39m]: User logged in successfully: biodunbio14@gmail.com
+2024-07-06T13:56:59.286Z [[32minfo[39m]: Request to POST /login completed in 79ms
+2024-07-06T13:56:59.286Z [[32minfo[39m]: Response Status:
+2024-07-06T13:58:21.803Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T13:58:23.030Z [[32minfo[39m]: Incoming Request: GET /me/data
+2024-07-06T13:58:23.031Z [[32minfo[39m]: Request Body:
+2024-07-06T13:58:23.090Z [[32minfo[39m]: User data retrieved successfully for user: 6689398ac0753415ee9f6ed3
+2024-07-06T13:58:23.095Z [[32minfo[39m]: Request to GET /me/data completed in 64ms
+2024-07-06T13:58:23.095Z [[32minfo[39m]: Response Status:
+2024-07-06T13:59:36.166Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T14:00:06.670Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T14:00:24.593Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T14:01:37.366Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T14:01:55.567Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T14:01:58.526Z [[32minfo[39m]: Incoming Request: GET /api/users/me/data
+2024-07-06T14:01:58.527Z [[32minfo[39m]: Request Body: {}
+2024-07-06T14:01:58.582Z [[32minfo[39m]: User data retrieved successfully for user: 6689398ac0753415ee9f6ed3
+2024-07-06T14:01:58.586Z [[32minfo[39m]: Request to GET /api/users/me/data completed in 60ms
+2024-07-06T14:01:58.586Z [[32minfo[39m]: Response Status: 200
+2024-07-06T14:02:08.071Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T14:03:55.461Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T14:04:02.010Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T14:04:10.034Z [[32minfo[39m]: Incoming Request: GET /api/users/me/data
+2024-07-06T14:04:10.034Z [[32minfo[39m]: Request Body: {"comment":"@user1 wein you"}
+2024-07-06T14:04:10.088Z [[32minfo[39m]: User data retrieved successfully for user: 6689398ac0753415ee9f6ed3
+2024-07-06T14:04:10.092Z [[32minfo[39m]: Request to GET /api/users/me/data completed in 58ms
+2024-07-06T14:04:10.093Z [[32minfo[39m]: Response Status: 200
+2024-07-06T14:04:26.794Z [[32minfo[39m]: Post created by biodunbio
+2024-07-06T14:04:26.795Z [[32minfo[39m]: Extracted mentions:
+2024-07-06T14:05:03.835Z [[32minfo[39m]: Post created by biodunbio
+2024-07-06T14:05:03.836Z [[32minfo[39m]: Extracted mentions:
+2024-07-06T14:06:12.580Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T14:06:12.914Z [[32minfo[39m]: Post created by biodunbio
+2024-07-06T14:06:12.914Z [[32minfo[39m]: Extracted mentions: 
+2024-07-06T14:06:28.754Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T14:06:29.455Z [[32minfo[39m]: Post created by biodunbio
+2024-07-06T14:06:29.456Z [[32minfo[39m]: Extracted mentions:
+2024-07-06T14:06:39.130Z [[32minfo[39m]: Post created by biodunbio
+2024-07-06T14:06:39.131Z [[32minfo[39m]: Extracted mentions:
+2024-07-06T14:06:50.588Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T14:07:05.079Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T14:07:19.344Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T14:07:31.120Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T14:08:15.047Z [[32minfo[39m]: Post created by biodunbio
+2024-07-06T14:08:15.048Z [[32minfo[39m]: Extracted mentions: user1
+2024-07-06T14:08:15.051Z [[32minfo[39m]: User found: user1, Socket ID: undefined
+2024-07-06T14:08:15.051Z [[32minfo[39m]: No active socket ID for @user1
+2024-07-06T14:08:30.798Z [[32minfo[39m]: Post created by biodunbio
+2024-07-06T14:08:30.798Z [[32minfo[39m]: Extracted mentions: 
+2024-07-06T14:09:04.412Z [[32minfo[39m]: Post created by biodunbio
+2024-07-06T14:09:04.412Z [[32minfo[39m]: Extracted mentions: biodunbio
+2024-07-06T14:09:04.414Z [[32minfo[39m]: User found: biodunbio, Socket ID: undefined
+2024-07-06T14:09:04.415Z [[32minfo[39m]: No active socket ID for @biodunbio
+2024-07-06T14:09:56.252Z [[32minfo[39m]: Comment event emitted for post 66894fcf0aad7cf38a455a41 by biodunbio: '@biodunbio wein you'
+2024-07-06T14:09:56.255Z [[32minfo[39m]: Notification sent to @biodunbio for being mentioned.
+2024-07-06T14:11:48.094Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T14:11:48.799Z [[32minfo[39m]: No active socket ID for @biodunbio
+2024-07-06T14:11:48.799Z [[32minfo[39m]: Comment event emitted for post 66894fcf0aad7cf38a455a41 by biodunbio: '@biodunbio wein you'
+2024-07-06T14:12:51.986Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T14:12:52.227Z [[32minfo[39m]: Extracted mentions: biodunbio
+2024-07-06T14:12:52.230Z [[32minfo[39m]: No active socket ID for @biodunbio
+2024-07-06T14:12:52.230Z [[32minfo[39m]: Comment event emitted for post 66894fcf0aad7cf38a455a41 by biodunbio: '@biodunbio wein you'
+2024-07-06T14:13:05.869Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T14:13:16.399Z [[32minfo[39m]: Server running on http://localhost:5000
