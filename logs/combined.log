@@ -166,3 +166,16 @@
 2024-07-06T15:10:33.620Z [[32minfo[39m]: Feed retrieved successfully
 2024-07-06T15:11:37.847Z [[32minfo[39m]: Server running on http://localhost:5000
 2024-07-06T15:11:57.638Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T17:56:06.852Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T17:57:25.855Z [[32minfo[39m]: Incoming Request: POST /api/users/register
+2024-07-06T17:57:25.855Z [[32minfo[39m]: Request Body: {"username":"exampleUser","email":"user@example.com","password":"password123"}
+2024-07-06T17:57:25.950Z [[32minfo[39m]: User registered successfully: exampleUser
+2024-07-06T17:57:25.952Z [[32minfo[39m]: Request to POST /api/users/register completed in 97ms
+2024-07-06T17:57:25.957Z [[32minfo[39m]: Response Status: 201
+2024-07-06T17:58:25.840Z [[32minfo[39m]: Incoming Request: POST /api/users/login
+2024-07-06T17:58:25.840Z [[32minfo[39m]: Request Body: {"email":"user@example.com","password":"password123"}
+2024-07-06T17:58:25.937Z [[32minfo[39m]: User logged in successfully: user@example.com
+2024-07-06T17:58:25.940Z [[32minfo[39m]: Request to POST /api/users/login completed in 99ms
+2024-07-06T17:58:25.941Z [[32minfo[39m]: Response Status: 200
+2024-07-06T18:04:11.453Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T18:05:49.891Z [[32minfo[39m]: No posts found from the users followed by the user

@@ -11,6 +11,55 @@
       "description": "Local server"
     }
   ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Post": {
+        "type": "object",
+        "properties": {
+          "createdBy": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Comment": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "postId": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
   "paths": {
     "/api/users/register": {
       "post": {
@@ -108,15 +157,11 @@
               "type": "string"
             },
             "description": "ID of the user to follow"
-          },
+          }
+        ],
+        "security": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Bearer token"
+            "bearerAuth": []
           }
         ],
         "responses": {
@@ -138,15 +183,9 @@
     "/api/posts/post-feed": {
       "post": {
         "summary": "Create a new post",
-        "parameters": [
+        "security": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Bearer token"
+            "bearerAuth": []
           }
         ],
         "requestBody": {
@@ -182,15 +221,9 @@
     "/api/posts/feed": {
       "get": {
         "summary": "Get user feed",
-        "parameters": [
+        "security": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Bearer token"
+            "bearerAuth": []
           }
         ],
         "responses": {
@@ -215,15 +248,11 @@
               "type": "string"
             },
             "description": "ID of the post to like"
-          },
+          }
+        ],
+        "security": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Bearer token"
+            "bearerAuth": []
           }
         ],
         "responses": {
@@ -248,15 +277,11 @@
               "type": "string"
             },
             "description": "ID of the post to comment on"
-          },
+          }
+        ],
+        "security": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Bearer token"
+            "bearerAuth": []
           }
         ],
         "requestBody": {
@@ -289,15 +314,9 @@
     "/api/users/me/data": {
       "get": {
         "summary": "Get user's posts, likes, and comments",
-        "parameters": [
+        "security": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Bearer token"
+            "bearerAuth": []
           }
         ],
         "responses": {
@@ -336,43 +355,6 @@
           },
           "500": {
             "description": "Internal server error"
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "Post": {
-        "type": "object",
-        "properties": {
-          "createdBy": {
-            "type": "string"
-          },
-          "content": {
-            "type": "string"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "Comment": {
-        "type": "object",
-        "properties": {
-          "userId": {
-            "type": "string"
-          },
-          "postId": {
-            "type": "string"
-          },
-          "content": {
-            "type": "string"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
           }
         }
       }
