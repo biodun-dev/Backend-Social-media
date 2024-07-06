@@ -44,7 +44,7 @@ This project is a backend API built with TypeScript, Express, and MongoDB. The A
 NODE_ENV=development
 PORT=5000
 MONGODB_URI=mongodb://localhost:27017/mydatabase
-JWT_SECRET=WsjhGXxyKpnILmnimFwiDk4qrNwE4uB9zr8Ks6TK7DhtSPpMUlPYwpJxwdyDgfDV
+JWT_SECRET=
 REDIS_HOST=localhost
 REDIS_PORT=6379  # Default Redis port
 REDIS_URL=redis://localhost:6379
