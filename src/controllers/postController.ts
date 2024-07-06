@@ -36,7 +36,6 @@ export const createPost = async (
     await post.save();
     logger.info(`Post created by ${username}`);
 
-    // Handle mentions
     const mentions = extractMentions(content);
     logger.info(`Extracted mentions: ${mentions.join(", ")}`);
     const mentionPromises = mentions.map(async (username) => {
@@ -82,12 +81,10 @@ export const getFeed = async (
   }
 
   try {
-    // Extract page and limit from query parameters, defaulting to page 1 and limit 10
     const page = parseInt(req.query.page as string, 10) || 1;
     const limit = parseInt(req.query.limit as string, 10) || 10;
     const skip = (page - 1) * limit;
 
-    // Find posts created by followed users with pagination
     const posts = await Post.find({
       createdBy: { $in: req.user.following },
     })
@@ -102,12 +99,10 @@ export const getFeed = async (
       });
     }
 
-    // Count total posts for pagination metadata
     const totalPosts = await Post.countDocuments({
       createdBy: { $in: req.user.following },
     });
 
-    // Calculate total pages
     const totalPages = Math.ceil(totalPosts / limit);
 
     const postsWithDetails = await Promise.all(
@@ -133,7 +128,6 @@ export const getFeed = async (
 
     logger.info("Feed retrieved successfully");
 
-    // Return paginated results and pagination metadata
     res.json({
       page,
       totalPages,
