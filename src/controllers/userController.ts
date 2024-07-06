@@ -1,7 +1,12 @@
 import { Request, Response } from "express";
 import User from "../models/User";
 import jwt from "jsonwebtoken";
-import { isError } from "../utils/errorUtils"; // Import the isError function
+
+import Post from "../models/Post";
+import Like from "../models/Like";
+import Comment from "../models/Comment";
+
+import { isError } from "../utils/errorUtils";
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -55,6 +60,40 @@ export const followUser = async (req: Request, res: Response) => {
     } else {
       res.status(400).send("Already following this user");
     }
+  } catch (error: unknown) {
+    if (isError(error)) {
+      res.status(500).json({ message: error.message });
+    } else {
+      res.status(500).json({ message: "An unknown error occurred" });
+    }
+  }
+};
+
+export const getUserData = async (req: Request, res: Response) => {
+  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+
+  try {
+    const userId = req.user.id;
+
+    // Fetch posts created by the user
+    const posts = await Post.find({ createdBy: userId });
+
+    // For each post, fetch likes and comments
+    const postDetails = await Promise.all(posts.map(async (post) => {
+      const likes = await Like.find({ postId: post._id }).populate('userId', 'username');
+      const comments = await Comment.find({ postId: post._id }).populate('userId', 'username');
+      return { ...post.toJSON(), likes, comments };
+    }));
+
+    // Fetch followers of the user
+    const followers = await User.find({ following: { $in: [userId] } }, 'username');
+
+    const userData = {
+      posts: postDetails,
+      followers
+    };
+
+    res.json(userData);
   } catch (error: unknown) {
     if (isError(error)) {
       res.status(500).json({ message: error.message });

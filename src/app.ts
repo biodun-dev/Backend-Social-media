@@ -21,6 +21,11 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
+// Root route
+app.get('/', (req, res) => {
+  res.send('Welcome to the API');
+});
+
 // Adding routes
 app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);

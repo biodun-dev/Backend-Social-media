@@ -5,9 +5,10 @@ import { authenticate } from '../middlewares/authMiddleware';  // Ensure correct
 const router = express.Router();
 
 // All post routes are protected
-router.post('/posts', authenticate, createPost);
+router.post('/post-feed', authenticate, createPost);
 router.get('/feed', authenticate, getFeed);
-router.post('/posts/:postId/like', authenticate, likePost);
-router.post('/posts/:postId/comment', authenticate, commentOnPost);
+router.post('/:postId/like', authenticate, likePost);
+router.post('/:postId/comment', authenticate, commentOnPost);
+
 
 export default router;

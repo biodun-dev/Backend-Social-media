@@ -1,12 +1,13 @@
-import { Request, Response } from 'express';
-import Post from '../models/Post';
-import Like from '../models/Like';
-import Comment from '../models/Comment';
-import { getCache, setCache } from '../utils/redisClient';
-import { isError } from '../utils/errorUtils'; // Import the isError function
+import { Request, Response } from "express";
+import Post from "../models/Post";
+import Like from "../models/Like";
+import Comment from "../models/Comment";
+import { getCache, setCache } from "../utils/redisClient";
+import { isError } from "../utils/errorUtils"; // Import the isError function
+import mongoose from "mongoose";
 
 export const createPost = async (req: Request, res: Response) => {
-  if (!req.user) return res.status(401).json({ message: 'Unauthorized' });
+  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
 
   try {
     const { content, mediaUrl } = req.body;
@@ -22,38 +23,51 @@ export const createPost = async (req: Request, res: Response) => {
   }
 };
 
-export const getFeed = async (req: Request, res: Response) => {
+export const getFeed = async (req: Request, res: Response)=> {
   if (!req.user) return res.status(401).json({ message: 'Unauthorized' });
 
-  try {
-    const cacheKey = `feed:${req.user.id}`;
-    const cachedData = await getCache(cacheKey);
-    if (cachedData) return res.json(JSON.parse(cachedData));
+  console.log("User's following list:", req.user.following);
 
+  try {
     const posts = await Post.find({ createdBy: { $in: req.user.following } }).sort({ createdAt: -1 });
-    await setCache(cacheKey, JSON.stringify(posts));
-    res.json(posts);
-  } catch (error: unknown) {
-    if (isError(error)) {
-      res.status(500).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: "An unknown error occurred" });
+    console.log("Posts fetched from database:", posts);
+
+    if (!posts.length) {
+      console.log("No posts found for the following list.");
+      return res.status(404).json({ message: 'No posts found from the users you are following.' });
     }
+
+    res.json(posts);
+  } catch (error) {
+    console.error("Error in fetching feed:", error);
+    res.status(500).json({ message: "An error occurred while fetching the feed." });
   }
 };
 
+
 export const likePost = async (req: Request, res: Response) => {
-  if (!req.user) return res.status(401).json({ message: 'Unauthorized' });
+  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
 
   try {
     const { postId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+      return res.status(400).json({ message: "Invalid postId format" });
+    }
+
+    const postExists = await Post.findById(postId);
+    if (!postExists) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
     const existingLike = await Like.findOne({ postId, userId: req.user.id });
     if (existingLike) {
-      return res.status(400).send('You already liked this post');
+      return res.status(400).send("You already liked this post");
     }
+
     const like = new Like({ postId, userId: req.user.id });
     await like.save();
-    res.status(201).send('Post liked');
+    res.status(201).send("Post liked");
   } catch (error: unknown) {
     if (isError(error)) {
       res.status(500).json({ message: error.message });
@@ -64,7 +78,7 @@ export const likePost = async (req: Request, res: Response) => {
 };
 
 export const commentOnPost = async (req: Request, res: Response) => {
-  if (!req.user) return res.status(401).json({ message: 'Unauthorized' });
+  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
 
   try {
     const { postId } = req.params;
