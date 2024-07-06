@@ -156,3 +156,11 @@
 2024-07-06T15:04:41.578Z [[32minfo[39m]: User data retrieved successfully for user: 6689398ac0753415ee9f6ed3
 2024-07-06T15:04:41.581Z [[32minfo[39m]: Request to GET /api/users/me/data completed in 96ms
 2024-07-06T15:04:41.581Z [[32minfo[39m]: Response Status: 200
+2024-07-06T15:06:23.072Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T15:06:57.590Z [[32minfo[39m]: Feed retrieved successfully
+2024-07-06T15:08:52.290Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T15:08:55.015Z [[32minfo[39m]: Feed retrieved successfully
+2024-07-06T15:10:01.513Z [[32minfo[39m]: Like by user1 event emitted for post 66894f0fe78aea5ee3796be8
+2024-07-06T15:10:23.016Z [[32minfo[39m]: Extracted mentions: 
+2024-07-06T15:10:23.016Z [[32minfo[39m]: Comment event emitted for post 66894f0fe78aea5ee3796be8 by user1: 'kendrick too good'
+2024-07-06T15:10:33.620Z [[32minfo[39m]: Feed retrieved successfully

@@ -116,6 +116,8 @@ export const getFeed = async (
         const comments = await Comment.find({ postId: post._id });
         return {
           ...post.toJSON(),
+          likeCount: likes.length,
+          commentCount: comments.length,
           likes: likes.map((like) => ({
             userId: like.userId,
             date: like.createdAt,
