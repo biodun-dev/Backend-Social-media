@@ -40,6 +40,9 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
             logger_1.default.warn("Authentication failed for email: " + email);
             return res.status(401).send("Authentication failed");
         }
+        if (!process.env.JWT_SECRET) {
+            throw new Error("JWT_SECRET is not defined");
+        }
         const token = jsonwebtoken_1.default.sign({ id: user._id }, process.env.JWT_SECRET, {
             expiresIn: "1h",
         });
@@ -55,7 +58,7 @@ const followUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     if (!req.user)
         return res.status(401).json({ message: "Unauthorized" });
     try {
-        const { followId } = req.params; // ID of the user to follow
+        const { followId } = req.params;
         const user = yield User_1.default.findById(req.user.id);
         if (!user) {
             logger_1.default.warn(`User not found: ${req.user.id}`);
@@ -82,19 +85,31 @@ const getUserData = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         return res.status(401).json({ message: "Unauthorized" });
     try {
         const userId = req.user.id;
-        // Fetch posts created by the user
-        const posts = yield Post_1.default.find({ createdBy: userId });
-        // For each post, fetch likes and comments
+        const page = parseInt(req.query.page, 10) || 1;
+        const limit = parseInt(req.query.limit, 10) || 10;
+        const skip = (page - 1) * limit;
+        const posts = yield Post_1.default.find({ createdBy: userId })
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+        if (!posts.length) {
+            logger_1.default.info("No posts found for the user");
+            return res.status(404).json({ message: "No posts found." });
+        }
+        const totalPosts = yield Post_1.default.countDocuments({ createdBy: userId });
+        const totalPages = Math.ceil(totalPosts / limit);
         const postDetails = yield Promise.all(posts.map((post) => __awaiter(void 0, void 0, void 0, function* () {
             const likes = yield Like_1.default.find({ postId: post._id }).populate("userId", "username");
             const comments = yield Comment_1.default.find({ postId: post._id }).populate("userId", "username");
             return Object.assign(Object.assign({}, post.toJSON()), { likes, comments });
         })));
-        // Fetch followers of the user
         const followers = yield User_1.default.find({ following: { $in: [userId] } }, "username");
         const userData = {
             posts: postDetails,
             followers,
+            page,
+            totalPages,
+            totalPosts,
         };
         logger_1.default.info(`User data retrieved successfully for user: ${userId}`);
         res.json(userData);
