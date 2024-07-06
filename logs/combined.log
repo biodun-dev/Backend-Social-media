@@ -128,3 +128,31 @@
 2024-07-06T14:55:24.252Z [[32minfo[39m]: Server running on http://localhost:5000
 2024-07-06T14:55:59.822Z [[32minfo[39m]: Server running on http://localhost:5000
 2024-07-06T14:57:13.904Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T14:57:27.026Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T14:59:48.176Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T15:01:35.726Z [[32minfo[39m]: Incoming Request: POST /api/users/login
+2024-07-06T15:01:35.728Z [[32minfo[39m]: Request Body: {"email":"biodunbio14+1@gmail.com","password":"passwprd123"}
+2024-07-06T15:01:35.910Z [[33mwarn[39m]: Authentication failed for email: biodunbio14+1@gmail.com
+2024-07-06T15:01:35.912Z [[32minfo[39m]: Request to POST /api/users/login completed in 186ms
+2024-07-06T15:01:35.913Z [[32minfo[39m]: Response Status: 401
+2024-07-06T15:01:46.670Z [[32minfo[39m]: Incoming Request: POST /api/users/login
+2024-07-06T15:01:46.670Z [[32minfo[39m]: Request Body: {"email":"biodunbio14+1@gmail.com","password":"password123"}
+2024-07-06T15:01:46.810Z [[32minfo[39m]: User logged in successfully: biodunbio14+1@gmail.com
+2024-07-06T15:01:46.813Z [[32minfo[39m]: Request to POST /api/users/login completed in 142ms
+2024-07-06T15:01:46.813Z [[32minfo[39m]: Response Status: 200
+2024-07-06T15:02:11.839Z [[32minfo[39m]: Feed retrieved successfully
+2024-07-06T15:03:50.632Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T15:04:03.784Z [[32minfo[39m]: Incoming Request: GET /api/users/me/data
+2024-07-06T15:04:03.784Z [[32minfo[39m]: Request Body: {"content":"i am the best @user1 can testify"}
+2024-07-06T15:04:03.798Z [[32minfo[39m]: Request to GET /api/users/me/data completed in 15ms
+2024-07-06T15:04:03.798Z [[32minfo[39m]: Response Status: 401
+2024-07-06T15:04:25.460Z [[32minfo[39m]: Incoming Request: POST /api/users/login
+2024-07-06T15:04:25.461Z [[32minfo[39m]: Request Body: {"email":"biodunbio14@gmail.com","password":"password123"}
+2024-07-06T15:04:25.623Z [[32minfo[39m]: User logged in successfully: biodunbio14@gmail.com
+2024-07-06T15:04:25.624Z [[32minfo[39m]: Request to POST /api/users/login completed in 164ms
+2024-07-06T15:04:25.625Z [[32minfo[39m]: Response Status: 200
+2024-07-06T15:04:41.485Z [[32minfo[39m]: Incoming Request: GET /api/users/me/data
+2024-07-06T15:04:41.485Z [[32minfo[39m]: Request Body: {"email":"biodunbio14@gmail.com","password":"password123"}
+2024-07-06T15:04:41.578Z [[32minfo[39m]: User data retrieved successfully for user: 6689398ac0753415ee9f6ed3
+2024-07-06T15:04:41.581Z [[32minfo[39m]: Request to GET /api/users/me/data completed in 96ms
+2024-07-06T15:04:41.581Z [[32minfo[39m]: Response Status: 200

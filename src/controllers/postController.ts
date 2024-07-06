@@ -82,16 +82,33 @@ export const getFeed = async (
   }
 
   try {
+    // Extract page and limit from query parameters, defaulting to page 1 and limit 10
+    const page = parseInt(req.query.page as string, 10) || 1;
+    const limit = parseInt(req.query.limit as string, 10) || 10;
+    const skip = (page - 1) * limit;
+
+    // Find posts created by followed users with pagination
     const posts = await Post.find({
       createdBy: { $in: req.user.following },
-    }).sort({ createdAt: -1 });
+    })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     if (!posts.length) {
       logger.info("No posts found from the users followed by the user");
-      return res
-        .status(404)
-        .json({ message: "No posts found from the users you are following." });
+      return res.status(404).json({
+        message: "No posts found from the users you are following.",
+      });
     }
+
+    // Count total posts for pagination metadata
+    const totalPosts = await Post.countDocuments({
+      createdBy: { $in: req.user.following },
+    });
+
+    // Calculate total pages
+    const totalPages = Math.ceil(totalPosts / limit);
 
     const postsWithDetails = await Promise.all(
       posts.map(async (post) => {
@@ -113,7 +130,14 @@ export const getFeed = async (
     );
 
     logger.info("Feed retrieved successfully");
-    res.json(postsWithDetails);
+
+    // Return paginated results and pagination metadata
+    res.json({
+      page,
+      totalPages,
+      totalPosts,
+      posts: postsWithDetails,
+    });
   } catch (error) {
     next(error);
   }

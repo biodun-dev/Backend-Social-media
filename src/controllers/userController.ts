@@ -55,7 +55,7 @@ export const followUser = async (
   if (!req.user) return res.status(401).json({ message: "Unauthorized" });
 
   try {
-    const { followId } = req.params; 
+    const { followId } = req.params;
     const user = await User.findById(req.user.id);
     if (!user) {
       logger.warn(`User not found: ${req.user.id}`);
@@ -86,10 +86,24 @@ export const getUserData = async (
   try {
     const userId = req.user.id;
 
-    // Fetch posts created by the user
-    const posts = await Post.find({ createdBy: userId });
+    const page = parseInt(req.query.page as string, 10) || 1;
+    const limit = parseInt(req.query.limit as string, 10) || 10;
+    const skip = (page - 1) * limit;
 
-    // For each post, fetch likes and comments
+    const posts = await Post.find({ createdBy: userId })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    if (!posts.length) {
+      logger.info("No posts found for the user");
+      return res.status(404).json({ message: "No posts found." });
+    }
+
+    const totalPosts = await Post.countDocuments({ createdBy: userId });
+
+    const totalPages = Math.ceil(totalPosts / limit);
+
     const postDetails = await Promise.all(
       posts.map(async (post) => {
         const likes = await Like.find({ postId: post._id }).populate(
@@ -104,7 +118,6 @@ export const getUserData = async (
       })
     );
 
-    // Fetch followers of the user
     const followers = await User.find(
       { following: { $in: [userId] } },
       "username"
@@ -113,6 +126,9 @@ export const getUserData = async (
     const userData = {
       posts: postDetails,
       followers,
+      page,
+      totalPages,
+      totalPosts,
     };
 
     logger.info(`User data retrieved successfully for user: ${userId}`);
