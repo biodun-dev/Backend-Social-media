@@ -88,11 +88,10 @@ export const likePost = async (req: Request, res: Response) => {
     const like = new Like({ postId, userId: req.user.id });
     await like.save();
 
-    // Emit WebSocket event with more details
     req.app.locals.io.emit("likePost", {
       postId: postId,
       userId: req.user.id,
-      userName: req.user.username, // Assuming username is available
+      userName: req.user.username, 
     });
 
     console.log(
@@ -127,7 +126,7 @@ export const commentOnPost = async (req: Request, res: Response) => {
       name: req.user.username,
     };
 
-    // Emit WebSocket event with more details
+  
     req.app.locals.io.emit("commentPost", {
       postId,
       comment,
