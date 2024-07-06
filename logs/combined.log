@@ -4,3 +4,14 @@
 2024-07-06T13:41:11.779Z [[32minfo[39m]: Extracted mentions:
 2024-07-06T13:41:11.784Z [[32minfo[39m]: User found: user1, Socket ID: undefined
 2024-07-06T13:41:11.784Z [[32minfo[39m]: No active socket ID for @user1
+2024-07-06T13:42:48.498Z [[32minfo[39m]: Incoming Request: POST /login
+2024-07-06T13:42:48.498Z [[32minfo[39m]: Request Body:
+2024-07-06T13:42:48.562Z [[32minfo[39m]: User logged in successfully: biodunbio14+1@gmail.com
+2024-07-06T13:42:48.564Z [[32minfo[39m]: Request to POST /login completed in 66ms
+2024-07-06T13:42:48.564Z [[32minfo[39m]: Response Status:
+2024-07-06T13:43:32.129Z [[32minfo[39m]: Feed retrieved successfully
+2024-07-06T13:43:58.383Z [[32minfo[39m]: Feed retrieved successfully
+2024-07-06T13:46:25.818Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T13:46:31.838Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T13:46:37.535Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T13:46:42.277Z [[32minfo[39m]: Server running on http://localhost:5000
