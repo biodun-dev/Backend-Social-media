@@ -18,9 +18,8 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const Post_1 = __importDefault(require("../models/Post"));
 const Like_1 = __importDefault(require("../models/Like"));
 const Comment_1 = __importDefault(require("../models/Comment"));
-const errorUtils_1 = require("../utils/errorUtils");
 const logger_1 = __importDefault(require("../utils/logger"));
-const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const register = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { username, email, password } = req.body;
         const user = new User_1.default({ username, email, password });
@@ -29,23 +28,16 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(201).send("User registered successfully");
     }
     catch (error) {
-        if ((0, errorUtils_1.isError)(error)) {
-            logger_1.default.error(`Error registering user: ${error.message}`);
-            res.status(500).json({ message: error.message });
-        }
-        else {
-            logger_1.default.error('Unknown error registering user');
-            res.status(500).json({ message: "An unknown error occurred" });
-        }
+        next(error);
     }
 });
 exports.register = register;
-const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email, password } = req.body;
         const user = yield User_1.default.findOne({ email });
         if (!user || !(yield user.comparePassword(password))) {
-            logger_1.default.warn('Authentication failed for email: ' + email);
+            logger_1.default.warn("Authentication failed for email: " + email);
             return res.status(401).send("Authentication failed");
         }
         const token = jsonwebtoken_1.default.sign({ id: user._id }, process.env.JWT_SECRET, {
@@ -55,18 +47,11 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.json({ token });
     }
     catch (error) {
-        if ((0, errorUtils_1.isError)(error)) {
-            logger_1.default.error(`Error logging in user: ${error.message}`);
-            res.status(500).json({ message: error.message });
-        }
-        else {
-            logger_1.default.error('Unknown error logging in user');
-            res.status(500).json({ message: "An unknown error occurred" });
-        }
+        next(error);
     }
 });
 exports.login = login;
-const followUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const followUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.user)
         return res.status(401).json({ message: "Unauthorized" });
     try {
@@ -88,18 +73,11 @@ const followUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         }
     }
     catch (error) {
-        if ((0, errorUtils_1.isError)(error)) {
-            logger_1.default.error(`Error following user: ${error.message}`);
-            res.status(500).json({ message: error.message });
-        }
-        else {
-            logger_1.default.error('Unknown error following user');
-            res.status(500).json({ message: "An unknown error occurred" });
-        }
+        next(error);
     }
 });
 exports.followUser = followUser;
-const getUserData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getUserData = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.user)
         return res.status(401).json({ message: "Unauthorized" });
     try {
@@ -108,28 +86,21 @@ const getUserData = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         const posts = yield Post_1.default.find({ createdBy: userId });
         // For each post, fetch likes and comments
         const postDetails = yield Promise.all(posts.map((post) => __awaiter(void 0, void 0, void 0, function* () {
-            const likes = yield Like_1.default.find({ postId: post._id }).populate('userId', 'username');
-            const comments = yield Comment_1.default.find({ postId: post._id }).populate('userId', 'username');
+            const likes = yield Like_1.default.find({ postId: post._id }).populate("userId", "username");
+            const comments = yield Comment_1.default.find({ postId: post._id }).populate("userId", "username");
             return Object.assign(Object.assign({}, post.toJSON()), { likes, comments });
         })));
         // Fetch followers of the user
-        const followers = yield User_1.default.find({ following: { $in: [userId] } }, 'username');
+        const followers = yield User_1.default.find({ following: { $in: [userId] } }, "username");
         const userData = {
             posts: postDetails,
-            followers
+            followers,
         };
         logger_1.default.info(`User data retrieved successfully for user: ${userId}`);
         res.json(userData);
     }
     catch (error) {
-        if ((0, errorUtils_1.isError)(error)) {
-            logger_1.default.error(`Error retrieving user data: ${error.message}`);
-            res.status(500).json({ message: error.message });
-        }
-        else {
-            logger_1.default.error('Unknown error retrieving user data');
-            res.status(500).json({ message: "An unknown error occurred" });
-        }
+        next(error);
     }
 });
 exports.getUserData = getUserData;

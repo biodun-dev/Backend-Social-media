@@ -16,13 +16,12 @@ exports.commentOnPost = exports.likePost = exports.getFeed = exports.createPost 
 const Post_1 = __importDefault(require("../models/Post"));
 const Like_1 = __importDefault(require("../models/Like"));
 const Comment_1 = __importDefault(require("../models/Comment"));
-const errorUtils_1 = require("../utils/errorUtils");
 const mongoose_1 = __importDefault(require("mongoose"));
 const mentionUtils_1 = require("../utils/mentionUtils");
 const User_1 = __importDefault(require("../models/User"));
 const path_1 = __importDefault(require("path"));
 const logger_1 = __importDefault(require("../utils/logger"));
-const createPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const createPost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     if (!req.user) {
         logger_1.default.warn("Unauthorized access attempt to create a post");
@@ -35,18 +34,18 @@ const createPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
     try {
         const { content } = req.body;
-        let mediaUrl = '';
+        let mediaUrl = "";
         if (req.file) {
-            mediaUrl = path_1.default.join('uploads', req.file.filename);
+            mediaUrl = path_1.default.join("uploads", req.file.filename);
         }
         const post = new Post_1.default({ createdBy: req.user._id, content, mediaUrl });
         yield post.save();
         logger_1.default.info(`Post created by ${username}`);
         // Handle mentions
         const mentions = (0, mentionUtils_1.extractMentions)(content);
-        logger_1.default.info("Extracted mentions:", mentions);
+        logger_1.default.info(`Extracted mentions: ${mentions.join(", ")}`);
         const mentionPromises = mentions.map((username) => __awaiter(void 0, void 0, void 0, function* () {
-            const mentionedUser = yield User_1.default.findOne({ username });
+            const mentionedUser = (yield User_1.default.findOne({ username }));
             if (mentionedUser) {
                 logger_1.default.info(`User found: ${mentionedUser.username}, Socket ID: ${mentionedUser.socketId}`);
                 if (mentionedUser.socketId) {
@@ -70,18 +69,11 @@ const createPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.status(201).json(post);
     }
     catch (error) {
-        if ((0, errorUtils_1.isError)(error)) {
-            logger_1.default.error(`Error creating post: ${error.message}`);
-            res.status(500).json({ message: error.message });
-        }
-        else {
-            logger_1.default.error("Unknown error occurred while creating post");
-            res.status(500).json({ message: "An unknown error occurred" });
-        }
+        next(error);
     }
 });
 exports.createPost = createPost;
-const getFeed = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getFeed = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.user) {
         logger_1.default.warn("Unauthorized access attempt to get feed");
         return res.status(401).json({ message: "Unauthorized" });
@@ -112,14 +104,11 @@ const getFeed = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.json(postsWithDetails);
     }
     catch (error) {
-        logger_1.default.error(`Error in fetching feed: ${error}`);
-        res.status(500).json({
-            message: (0, errorUtils_1.isError)(error) ? error.message : "An unknown error occurred",
-        });
+        next(error);
     }
 });
 exports.getFeed = getFeed;
-const likePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const likePost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.user) {
         logger_1.default.warn("Unauthorized access attempt to like a post");
         return res.status(401).json({ message: "Unauthorized" });
@@ -151,18 +140,11 @@ const likePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(201).send("Post liked");
     }
     catch (error) {
-        if ((0, errorUtils_1.isError)(error)) {
-            logger_1.default.error(`Error liking post: ${error.message}`);
-            res.status(500).json({ message: error.message });
-        }
-        else {
-            logger_1.default.error("Unknown error occurred while liking post");
-            res.status(500).json({ message: "An unknown error occurred" });
-        }
+        next(error);
     }
 });
 exports.likePost = likePost;
-const commentOnPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const commentOnPost = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.user) {
         logger_1.default.warn("Unauthorized access attempt to comment on a post");
         return res.status(401).json({ message: "Unauthorized" });
@@ -187,32 +169,35 @@ const commentOnPost = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         });
         // Handle mentions
         const mentions = (0, mentionUtils_1.extractMentions)(comment);
-        mentions.forEach((username) => __awaiter(void 0, void 0, void 0, function* () {
-            const mentionedUser = yield User_1.default.findOne({ username: username });
+        logger_1.default.info(`Extracted mentions: ${mentions.join(", ")}`);
+        const mentionPromises = mentions.map((username) => __awaiter(void 0, void 0, void 0, function* () {
+            const mentionedUser = (yield User_1.default.findOne({ username }));
             if (mentionedUser) {
-                req.app.locals.io
-                    .to(mentionedUser.socketId)
-                    .emit("mentionedInComment", {
-                    postId,
-                    commentId: newComment._id,
-                    fromUser: userDetail,
-                    commentText: comment,
-                });
-                logger_1.default.info(`Notification sent to @${username} for being mentioned.`);
+                if (mentionedUser.socketId) {
+                    req.app.locals.io
+                        .to(mentionedUser.socketId)
+                        .emit("mentionedInComment", {
+                        postId,
+                        commentId: newComment._id,
+                        fromUser: userDetail,
+                        commentText: comment,
+                    });
+                    logger_1.default.info(`Notification sent to @${username} for being mentioned.`);
+                }
+                else {
+                    logger_1.default.info(`No active socket ID for @${username}`);
+                }
+            }
+            else {
+                logger_1.default.info(`No user found for @${username}`);
             }
         }));
+        yield Promise.all(mentionPromises);
         logger_1.default.info(`Comment event emitted for post ${postId} by ${userDetail.name}: '${comment}'`);
         res.status(201).json(newComment);
     }
     catch (error) {
-        if ((0, errorUtils_1.isError)(error)) {
-            logger_1.default.error(`Error commenting on post: ${error.message}`);
-            res.status(500).json({ message: error.message });
-        }
-        else {
-            logger_1.default.error("Unknown error occurred while commenting on post");
-            res.status(500).json({ message: "An unknown error occurred" });
-        }
+        next(error);
     }
 });
 exports.commentOnPost = commentOnPost;
