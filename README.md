@@ -16,7 +16,7 @@ This project is a backend API built with TypeScript, Express, and MongoDB. The A
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
+- Node.js (v18 or higher)
 - npm or yarn
 - MongoDB instance
 
