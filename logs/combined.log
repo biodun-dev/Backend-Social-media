@@ -179,3 +179,127 @@
 2024-07-06T17:58:25.941Z [[32minfo[39m]: Response Status: 200
 2024-07-06T18:04:11.453Z [[32minfo[39m]: Server running on http://localhost:5000
 2024-07-06T18:05:49.891Z [[32minfo[39m]: No posts found from the users followed by the user
+2024-07-06T22:24:30.709Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:25:39.752Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:27:23.990Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:27:30.172Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:28:32.937Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:28:52.998Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:29:44.580Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:29:55.988Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:30:51.067Z [[32minfo[39m]: Incoming Request: POST /api/users/login
+2024-07-06T22:30:51.068Z [[32minfo[39m]: Request Body: {"email":"biodunbio14+1@gmail.com","password":"password123"}
+2024-07-06T22:30:51.153Z [[32minfo[39m]: User logged in successfully: biodunbio14+1@gmail.com
+2024-07-06T22:30:51.156Z [[32minfo[39m]: Request to POST /api/users/login completed in 89ms
+2024-07-06T22:30:51.157Z [[32minfo[39m]: Response Status: 200
+2024-07-06T22:31:12.174Z [[32minfo[39m]: Feed retrieved and cached successfully
+2024-07-06T22:32:14.669Z [[32minfo[39m]: Incoming Request: POST /api/users/login
+2024-07-06T22:32:14.669Z [[32minfo[39m]: Request Body: {"email":"biodunbio14@gmail.com","password":"password123"}
+2024-07-06T22:32:14.734Z [[32minfo[39m]: User logged in successfully: biodunbio14@gmail.com
+2024-07-06T22:32:14.735Z [[32minfo[39m]: Request to POST /api/users/login completed in 66ms
+2024-07-06T22:32:14.735Z [[32minfo[39m]: Response Status: 200
+2024-07-06T22:33:11.671Z [[32minfo[39m]: Post created by biodunbio
+2024-07-06T22:33:11.672Z [[32minfo[39m]: Extracted mentions: 
+2024-07-06T22:33:35.476Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:33:44.161Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:33:45.340Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:33:46.136Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:34:19.020Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:35:47.940Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:35:56.807Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:35:57.984Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:36:04.193Z [[32minfo[39m]: Post created by biodunbio
+2024-07-06T22:36:04.193Z [[32minfo[39m]: Extracted mentions: 
+2024-07-06T22:36:05.654Z [[32minfo[39m]: Post created by biodunbio
+2024-07-06T22:36:05.654Z [[32minfo[39m]: Extracted mentions: 
+2024-07-06T22:36:13.405Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:36:14.419Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:37:34.610Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:37:38.719Z [[32minfo[39m]: Post created by biodunbio
+2024-07-06T22:37:38.720Z [[32minfo[39m]: Cache invalidated after post creation.
+2024-07-06T22:37:52.918Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:37:54.054Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:38:11.071Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:38:47.834Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:39:03.440Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:39:10.681Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:39:19.376Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:39:23.880Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:39:33.243Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:39:47.130Z [[32minfo[39m]: Feed retrieved successfully
+2024-07-06T22:40:03.561Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:40:19.336Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:42:03.764Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:42:06.221Z [[32minfo[39m]: Feed retrieved and cached successfully
+2024-07-06T22:42:10.401Z [[32minfo[39m]: Post created by biodunbio
+2024-07-06T22:42:10.402Z [[32minfo[39m]: Extracted mentions: 
+2024-07-06T22:42:14.077Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:42:15.174Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:42:16.005Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:45:56.343Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:46:05.877Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:46:06.088Z [[32minfo[39m]: Feed retrieved and cached successfully
+2024-07-06T22:46:11.876Z [[32minfo[39m]: Post created by biodunbio
+2024-07-06T22:46:11.876Z [[32minfo[39m]: Cache invalidated after post creation.
+2024-07-06T22:46:15.908Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:46:18.090Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:46:32.028Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:46:32.556Z [[32minfo[39m]: Feed retrieved and cached successfully
+2024-07-06T22:46:34.561Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:46:39.824Z [[32minfo[39m]: Post created by biodunbio
+2024-07-06T22:46:39.825Z [[32minfo[39m]: Cache invalidated after post creation.
+2024-07-06T22:46:51.062Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:46:52.584Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:46:53.506Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:46:54.233Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:46:54.954Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:46:55.629Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:46:56.767Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:46:57.321Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:47:01.226Z [[32minfo[39m]: Post created by biodunbio
+2024-07-06T22:47:01.226Z [[32minfo[39m]: Cache invalidated after post creation.
+2024-07-06T22:47:04.307Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:47:06.081Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:47:06.799Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:47:07.380Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:47:08.075Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:47:08.688Z [[32minfo[39m]: Feed retrieved and cached successfully
+2024-07-06T22:47:09.373Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:47:10.213Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:47:50.919Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:52:22.650Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:52:24.144Z [[32minfo[39m]: Feed retrieved and cached successfully
+2024-07-06T22:52:30.451Z [[32minfo[39m]: Post created by biodunbio
+2024-07-06T22:52:30.451Z [[32minfo[39m]: Cache invalidated after post creation.
+2024-07-06T22:52:41.131Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:52:42.157Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:52:42.868Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:52:43.497Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:52:44.172Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:52:44.823Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:52:45.457Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:52:46.086Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:52:46.705Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:52:47.411Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:52:48.051Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:52:48.634Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:52:49.130Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:52:49.717Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:52:50.016Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:52:50.450Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:52:51.027Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:52:51.577Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:52:52.376Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:52:56.871Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:52:57.553Z [[32minfo[39m]: Feed retrieved from cache
+2024-07-06T22:53:02.244Z [[32minfo[39m]: Post created by biodunbio
+2024-07-06T22:53:02.244Z [[32minfo[39m]: Cache invalidated after post creation.
+2024-07-06T22:53:06.488Z [[32minfo[39m]: Feed retrieved and cached successfully
+2024-07-06T22:54:59.140Z [[32minfo[39m]: Server running on http://localhost:5000
+2024-07-06T22:55:05.623Z [[32minfo[39m]: Post created by biodunbio
+2024-07-06T22:55:05.623Z [[32minfo[39m]: Cache invalidated after post creation.
+2024-07-06T22:55:10.398Z [[32minfo[39m]: Feed retrieved and cached successfully
+2024-07-06T22:55:22.356Z [[32minfo[39m]: Post created by biodunbio
+2024-07-06T22:55:22.357Z [[32minfo[39m]: Cache invalidated after post creation.
+2024-07-06T22:55:25.635Z [[32minfo[39m]: Feed retrieved and cached successfully
+2024-07-06T22:57:24.486Z [[32minfo[39m]: Server running on http://localhost:5000
