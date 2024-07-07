@@ -1,4 +1,4 @@
-// src/middlewares/mockAuth.ts
+
 import { Request, Response, NextFunction } from "express";
 import { Types } from "mongoose";
 

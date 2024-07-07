@@ -2,8 +2,8 @@ import request from 'supertest';
 import sinon from 'sinon';
 import jwt from 'jsonwebtoken';
 import User from '../../src/models/User';
-import app from '../../src/app'; // Assuming your Express app is exported from this file
-import logger from '../../src/utils/logger'; // Ensure logger is imported
+import app from '../../src/app'; 
+import logger from '../../src/utils/logger'; 
 
 describe('User Controller', () => {
   afterEach(() => {
