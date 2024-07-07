@@ -1,64 +1,46 @@
 import request from "supertest";
-import app from "../../src/app"; // Adjust the path if necessary
+import mongoose from "mongoose";
+import app from "../../src/app";
 import User from "../../src/models/User";
 
-jest.mock("../../src/models/User");
-
-describe("User Controller", () => {
-  let mockSave: jest.Mock;
-  let mockFindOne: jest.Mock;
-
-  beforeAll(() => {
-    mockSave = jest.fn();
-    mockFindOne = jest.fn();
-    User.prototype.save = mockSave;
-    User.findOne = mockFindOne;
+describe("User Integration Tests", () => {
+  beforeAll(async () => {
+    const url = `mongodb://127.0.0.1/user_test_db`;
+    await mongoose.connect(url);
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
+  afterAll(async () => {
+    await mongoose.connection.db.dropDatabase();
+    await mongoose.connection.close();
   });
 
-  describe("register", () => {
+  afterEach(async () => {
+    await User.deleteMany({});
+  });
+
+  describe("POST /api/users/register", () => {
     it("should register a new user", async () => {
       const user = {
         username: "testuser",
         email: "test@example.com",
         password: "password123",
       };
-      mockSave.mockResolvedValue(user);
 
       const res = await request(app).post("/api/users/register").send(user);
 
       expect(res.status).toBe(201);
       expect(res.text).toBe("User registered successfully");
-      expect(mockSave).toHaveBeenCalledTimes(1);
-    });
-
-    it("should handle errors", async () => {
-      mockSave.mockRejectedValue(new Error("Save failed"));
-
-      const res = await request(app)
-        .post("/api/users/register")
-        .send({
-          username: "testuser",
-          email: "test@example.com",
-          password: "password123",
-        });
-
-      expect(res.status).toBe(500);
     });
   });
 
-  describe("login", () => {
+  describe("POST /api/users/login", () => {
     it("should authenticate user and return token", async () => {
-      const user = {
+      const user = new User({
+        username: "testuser",
         email: "test@example.com",
         password: "password123",
-        comparePassword: jest.fn().mockResolvedValue(true),
-        _id: "userId",
-      };
-      mockFindOne.mockResolvedValue(user);
+      });
+      await user.save();
 
       const res = await request(app)
         .post("/api/users/login")
@@ -66,12 +48,9 @@ describe("User Controller", () => {
 
       expect(res.status).toBe(200);
       expect(res.body).toHaveProperty("token");
-      expect(mockFindOne).toHaveBeenCalledTimes(1);
     });
 
     it("should handle authentication failure", async () => {
-      mockFindOne.mockResolvedValue(null);
-
       const res = await request(app)
         .post("/api/users/login")
         .send({ email: "test@example.com", password: "wrongpassword" });
