@@ -130,7 +130,7 @@ http://localhost:5000/api-docs
 
 ### Get User Feed
 
-- **Endpoint**: `/api/users/posts/feed`
+- **Endpoint**: `/api/users/posts/feed` 
 - **Method**: GET
 - **Query Params**: `page`, `limit`
 
