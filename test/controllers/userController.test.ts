@@ -1,83 +1,90 @@
-import request from "supertest";
-import app from "../../src/app"; // Adjust the path if necessary
-import User from "../../src/models/User";
+import request from 'supertest';
+import sinon from 'sinon';
+import jwt from 'jsonwebtoken';
+import User from '../../src/models/User';
+import app from '../../src/app'; // Assuming your Express app is exported from this file
+import logger from '../../src/utils/logger'; // Ensure logger is imported
 
-jest.mock("../../src/models/User");
-
-describe("User Controller", () => {
-  let mockSave: jest.Mock;
-  let mockFindOne: jest.Mock;
-
-  beforeAll(() => {
-    mockSave = jest.fn();
-    mockFindOne = jest.fn();
-    User.prototype.save = mockSave;
-    User.findOne = mockFindOne;
-  });
-
+describe('User Controller', () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    sinon.restore();
   });
 
-  describe("register", () => {
-    it("should register a new user", async () => {
-      const user = {
-        username: "testuser",
-        email: "test@example.com",
-        password: "password123",
-      };
-      mockSave.mockResolvedValue(user);
+  describe('register', () => {
+    it('should register a new user', async () => {
+      const saveStub = sinon.stub(User.prototype, 'save').resolves();
+      const loggerStub = sinon.stub(logger, 'info');
 
-      const res = await request(app).post("/api/users/register").send(user);
+      const userData = { username: 'testuser', email: 'test@example.com', password: 'password123' };
 
-      expect(res.status).toBe(201);
-      expect(res.text).toBe("User registered successfully");
-      expect(mockSave).toHaveBeenCalledTimes(1);
+      const response = await request(app)
+        .post('/api/users/register')
+        .send(userData)
+        .expect(201);
+
+      expect(response.text).toBe('User registered successfully');
+      expect(saveStub.calledOnce).toBe(true);
+      expect(loggerStub.calledWith(sinon.match(`User registered successfully: ${userData.username}`))).toBe(true);
     });
 
-    it("should handle errors", async () => {
-      mockSave.mockRejectedValue(new Error("Save failed"));
+    it('should handle errors during registration', async () => {
+      const saveStub = sinon.stub(User.prototype, 'save').rejects(new Error('Error saving user'));
 
-      const res = await request(app)
-        .post("/api/users/register")
-        .send({
-          username: "testuser",
-          email: "test@example.com",
-          password: "password123",
-        });
+      const userData = { username: 'testuser', email: 'test@example.com', password: 'password123' };
 
-      expect(res.status).toBe(500);
+      const response = await request(app)
+        .post('/api/users/register')
+        .send(userData)
+        .expect(500);
+
+      expect(saveStub.calledOnce).toBe(true);
+      expect(response.body.message).toBe('Error saving user'); // Match the actual error message
     });
   });
 
-  describe("login", () => {
-    it("should authenticate user and return token", async () => {
+  describe('login', () => {
+    it('should login a user', async () => {
       const user = {
-        email: "test@example.com",
-        password: "password123",
-        comparePassword: jest.fn().mockResolvedValue(true),
-        _id: "userId",
+        _id: 'userId',
+        email: 'test@example.com',
+        comparePassword: sinon.stub().resolves(true)
       };
-      mockFindOne.mockResolvedValue(user);
 
-      const res = await request(app)
-        .post("/api/users/login")
-        .send({ email: "test@example.com", password: "password123" });
+      const findOneStub = sinon.stub(User, 'findOne').resolves(user);
+      const loggerStub = sinon.stub(logger, 'info');
 
-      expect(res.status).toBe(200);
-      expect(res.body).toHaveProperty("token");
-      expect(mockFindOne).toHaveBeenCalledTimes(1);
+      const loginData = { email: 'test@example.com', password: 'password123' };
+
+      const response = await request(app)
+        .post('/api/users/login')
+        .send(loginData)
+        .expect(200);
+
+      expect(response.body.token).toBeDefined(); // Check that the token is defined
+
+      // Verify token structure and payload
+      const decoded = jwt.verify(response.body.token, process.env.JWT_SECRET!) as { id: string };
+      expect(decoded.id).toBe(user._id);
+
+      expect(findOneStub.calledOnceWith({ email: 'test@example.com' })).toBe(true);
+      expect(user.comparePassword.calledOnceWith('password123')).toBe(true);
+      expect(loggerStub.calledWith(sinon.match(`User logged in successfully: ${loginData.email}`))).toBe(true);
     });
 
-    it("should handle authentication failure", async () => {
-      mockFindOne.mockResolvedValue(null);
+    it('should handle authentication failure', async () => {
+      const findOneStub = sinon.stub(User, 'findOne').resolves(null);
+      const loggerStub = sinon.stub(logger, 'warn');
 
-      const res = await request(app)
-        .post("/api/users/login")
-        .send({ email: "test@example.com", password: "wrongpassword" });
+      const loginData = { email: 'test@example.com', password: 'password123' };
 
-      expect(res.status).toBe(401);
-      expect(res.text).toBe("Authentication failed");
+      const response = await request(app)
+        .post('/api/users/login')
+        .send(loginData)
+        .expect(401);
+
+      expect(response.text).toBe('Authentication failed');
+      expect(findOneStub.calledOnceWith({ email: 'test@example.com' })).toBe(true);
+      expect(loggerStub.calledWith(sinon.match('Authentication failed for email: test@example.com'))).toBe(true);
     });
   });
 });
