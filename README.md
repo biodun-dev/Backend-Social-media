@@ -43,9 +43,6 @@ NODE_ENV=development
 PORT=5000
 MONGODB_URI=mongodb://localhost:27017/mydatabase
 JWT_SECRET=
-REDIS_HOST=localhost
-REDIS_PORT=6379  # Default Redis port
-REDIS_URL=redis://localhost:6379
    ```
 
 4. Run the application:
