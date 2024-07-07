@@ -62,6 +62,7 @@ REDIS_URL=redis://localhost:6379
 - `npm run build`: Build the application for production.
 - `npm start`: Run the application in production mode.
 - `npm run lint`: Lint the TypeScript code.
+- `npm test`: Run the tests using Jest.
 
 ### Folder Structure
 
