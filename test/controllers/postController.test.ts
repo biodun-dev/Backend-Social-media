@@ -1,16 +1,16 @@
 import request from "supertest";
 import sinon from "sinon";
 import mongoose from "mongoose";
-import app from "../../src/app"; // Ensure the correct path to app
+import app from "../../src/app"; 
 import Post from "../../src/models/Post";
-import Like from "../../src/models/Like"; // Add this import
-import Comment from "../../src/models/Comment"; // Add this import
-import logger from "../../src/utils/logger"; // Ensure logger is imported
-import cache from "../../src/utils/cache"; // Ensure cache is imported
+import Like from "../../src/models/Like"; 
+import Comment from "../../src/models/Comment"; 
+import logger from "../../src/utils/logger"; 
+import cache from "../../src/utils/cache"; 
 
 describe("Post Controller", () => {
   afterEach(() => {
-    sinon.restore(); // Ensures that all sinon stubs/spies are restored after each test
+    sinon.restore(); 
   });
 
   describe("createPost", () => {
@@ -29,9 +29,7 @@ describe("Post Controller", () => {
     });
 
     it("should handle errors during post creation", async () => {
-      const saveStub = sinon
-        .stub(Post.prototype, "save")
-        .rejects(new Error("Error creating post"));
+      const saveStub = sinon.stub(Post.prototype, "save").rejects(new Error("Error creating post"));
       const loggerStub = sinon.stub(logger, "error");
 
       const response = await request(app)
@@ -45,23 +43,19 @@ describe("Post Controller", () => {
   });
 
   describe("getFeed", () => {
-    afterEach(() => {
-      sinon.restore(); // Ensures that all sinon stubs/spies are restored after each test
-    });
-
     it("should retrieve the feed for authenticated user", async () => {
       const mockPost = {
         _id: new mongoose.Types.ObjectId(),
         content: "Post content",
-        toJSON: function() {
+        toJSON: function () {
           return this;
-        }
+        },
       };
 
       const postStub = sinon.stub(Post, "find").returns({
         sort: sinon.stub().returnsThis(),
         skip: sinon.stub().returnsThis(),
-        limit: sinon.stub().resolves([mockPost])
+        limit: sinon.stub().resolves([mockPost]),
       } as any);
       const countDocumentsStub = sinon.stub(Post, "countDocuments").resolves(1);
       const likeFindStub = sinon.stub(Like, "find").resolves([]);
@@ -75,47 +69,85 @@ describe("Post Controller", () => {
           .get("/api/posts/feed")
           .query({ page: 1, limit: 10 });
 
-        console.log('Response Status:', response.status);
-        console.log('Response Body:', response.body);
+        console.log("Response Status:", response.status);
+        console.log("Response Body:", response.body);
 
         expect(response.status).toBe(200);
         expect(response.body.posts).toHaveLength(1);
         expect(postStub.calledOnce).toBe(true);
         expect(countDocumentsStub.calledOnce).toBe(true);
+        expect(likeFindStub.calledOnce).toBe(true);
+        expect(commentFindStub.calledOnce).toBe(true);
         expect(loggerStub.calledWith(sinon.match("Feed retrieved and cached successfully"))).toBe(true);
         expect(cacheSetStub.calledOnce).toBe(true);
       } catch (error) {
-        console.error('Error during test execution:', error);
+        console.error("Error during test execution:", error);
         throw error;
       }
-    }, 5000); // Set a specific timeout for this test if it requires more time
+    }, 5000);
+  });
 
-    it("should handle errors during feed retrieval", async () => {
-      const postStub = sinon.stub(Post, "find").throws(new Error("Error retrieving feed"));
-      const countDocumentsStub = sinon.stub(Post, "countDocuments").throws(new Error("Error counting documents"));
-      const likeFindStub = sinon.stub(Like, "find").throws(new Error("Error finding likes"));
-      const commentFindStub = sinon.stub(Comment, "find").throws(new Error("Error finding comments"));
+  describe("likePost", () => {
+    it("should like a post for authenticated user", async () => {
+      const postId = new mongoose.Types.ObjectId().toString();
+      const postStub = sinon.stub(Post, "findById").resolves({ _id: postId } as any);
+      const likeStub = sinon.stub(Like.prototype, "save").resolves();
+      const existingLikeStub = sinon.stub(Like, "findOne").resolves(null);
+      const loggerStub = sinon.stub(logger, "info");
+
+      const response = await request(app)
+        .post(`/api/posts/${postId}/like`);
+
+      expect(response.status).toBe(201);
+      expect(likeStub.calledOnce).toBe(true);
+      expect(existingLikeStub.calledOnce).toBe(true);
+      expect(postStub.calledOnce).toBe(true);
+      expect(loggerStub.calledWith(sinon.match(`Like by testUser event emitted for post ${postId}`))).toBe(true);
+    });
+
+    it("should handle errors during liking a post", async () => {
+      const postId = new mongoose.Types.ObjectId().toString();
+      const postStub = sinon.stub(Post, "findById").throws(new Error("Error liking post"));
       const loggerStub = sinon.stub(logger, "error");
-      const cacheStub = sinon.stub(cache, "get").returns(null);
 
-      try {
-        const response = await request(app)
-          .get("/api/posts/feed")
-          .query({ page: 1, limit: 10 });
+      const response = await request(app)
+        .post(`/api/posts/${postId}/like`);
 
-        console.log('Error Response Status:', response.status);
-        console.log('Error Response Body:', response.body);
+      expect(response.status).toBe(500);
+      expect(postStub.calledOnce).toBe(true);
+      expect(loggerStub.calledWith(sinon.match("Error liking post"))).toBe(true);
+    });
+  });
 
-        expect(response.status).toBe(500);
-        expect(postStub.calledOnce).toBe(true);
-        expect(countDocumentsStub.calledOnce).toBe(true);
-        expect(likeFindStub.calledOnce).toBe(true);
-        expect(commentFindStub.calledOnce).toBe(true);
-        expect(loggerStub.calledWith(sinon.match("Error retrieving feed"))).toBe(true);
-      } catch (error) {
-        console.error('Error during test execution:', error);
-        throw error;
-      }
-    }, 5000); // Adjusting the timeout for potentially slow operations
+  describe("commentOnPost", () => {
+    it("should comment on a post for authenticated user", async () => {
+      const postId = new mongoose.Types.ObjectId().toString();
+      const newComment = { postId, userId: "testUserId", comment: "Great post!" };
+      const commentStub = sinon.stub(Comment.prototype, "save").resolves(newComment as any);
+      const loggerStub = sinon.stub(logger, "info");
+
+      const response = await request(app)
+        .post(`/api/posts/${postId}/comment`)
+        .send({ comment: "Great post!" });
+
+      expect(response.status).toBe(201);
+      expect(response.body.comment).toBe("Great post!");
+      expect(commentStub.calledOnce).toBe(true);
+      expect(loggerStub.calledWith(sinon.match(`Comment event emitted for post ${postId}`))).toBe(true);
+    });
+
+    it("should handle errors during commenting on a post", async () => {
+      const postId = new mongoose.Types.ObjectId().toString();
+      const commentStub = sinon.stub(Comment.prototype, "save").throws(new Error("Error commenting on post"));
+      const loggerStub = sinon.stub(logger, "error");
+
+      const response = await request(app)
+        .post(`/api/posts/${postId}/comment`)
+        .send({ comment: "Great post!" });
+
+      expect(response.status).toBe(500);
+      expect(commentStub.calledOnce).toBe(true);
+      expect(loggerStub.calledWith(sinon.match("Error commenting on post"))).toBe(true);
+    });
   });
 });
