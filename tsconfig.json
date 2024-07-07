@@ -15,6 +15,6 @@
   },
   "include": [
     "src/**/*" 
-  ],
+, "test/controllers/followUser.test.ts"  ],
   "exclude": ["node_modules", "dist"]
 }
